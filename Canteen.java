@@ -1,0 +1,79 @@
+import java.util.Scanner;
+
+public class Canteen{
+    public static void main(String[] args) {
+        Scanner input = new Scanner(System.in);
+
+        String[] items = {"Burger", "Fries", "Pizza", "Hotdog", "Sandwich"};
+        double[] prices = {50, 30, 80, 40, 60};
+
+        System.out.println("===== CANTEEN MENU =====");
+        for (int i = 0; i < items.length; i++) {
+            System.out.println((i + 1) + ". " + items[i] + " - P" + prices[i]);
+        }
+
+        int totalQuantity = 0;
+        double totalAmount = 0;
+        double totalDiscount = 0;
+        char again = 'y';
+
+        while (again == 'y') {
+            int item = getValidInt(input, "\nEnter item number (1-" + items.length + "): ", 1, items.length);
+            int quantity = getValidInt(input, "Enter quantity (1-10) or 0 to go back: ", 0, 10);
+
+            if (quantity == 0) {
+                continue;
+            }
+
+            char student = getValidChar(input, "Are you a student? (Y/N): ");
+
+            double amount = prices[item - 1] * quantity;
+            double discount;
+
+            if (student == 'y') {
+                discount = amount >= 500 ? amount * 0.15 : amount * 0.10;
+            } else {
+                discount = amount >= 500 ? amount * 0.05 : 0;
+            }
+
+            totalQuantity += quantity;
+            totalAmount += amount;
+            totalDiscount += discount;
+
+            System.out.printf("Order amount: P%.2f%n", amount);
+            System.out.printf("Discount: P%.2f%n", discount);
+
+            again = getValidChar(input, "Do you want to order again? (Y/N): ");
+        }
+
+        System.out.println("\n===== FINAL RECEIPT =====");
+        System.out.println("Total quantity: " + totalQuantity);
+        System.out.printf("Total amount: P%.2f%n", totalAmount);
+        System.out.printf("Total discount: P%.2f%n", totalDiscount);
+        System.out.printf("Final amount to pay: P%.2f%n", totalAmount - totalDiscount);
+
+        input.close();
+    }
+
+    private static int getValidInt(Scanner input, String prompt, int min, int max) {
+        while (true) {
+            System.out.print(prompt);
+            if (input.hasNextInt()) {
+                int val = input.nextInt();
+                if (val >= min && val <= max) return val;
+            } else {
+                input.next();
+            }
+            System.out.println("Invalid input! Try again.");
+        }
+    }
+
+    private static char getValidChar(Scanner input, String prompt) {
+        while (true) {
+            System.out.print(prompt);
+            char choice = Character.toLowerCase(input.next().charAt(0));
+            if (choice == 'y' || choice == 'n') return choice;
+            System.out.println("Invalid input! Try again.");
+        }
+    }
+}
